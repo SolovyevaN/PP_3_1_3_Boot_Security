@@ -11,16 +11,19 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
+import java.util.Set;
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
     private final UserService userService;
     private final RoleRepository roleRepository;
+
     @Autowired
     public AdminController(UserService userService, RoleRepository roleRepository) {
 
         this.userService = userService;
-        this.roleRepository= roleRepository;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping
@@ -44,14 +47,9 @@ public class AdminController {
                           @RequestParam("password") String password,
                           @RequestParam("role") String role,
                           RedirectAttributes redirectAttributes) {
-        User user = new User();
-        user.setName(name);
-        user.setSurname(surname);
-        user.setAge(age);
-        user.setPassword(password);
         Role userRole = roleRepository.findByName(role)
-                        .orElseThrow(() -> new RuntimeException("Role not found"));
-        user.getRoles().add(userRole);
+                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
+        User user = new User(name, surname, age, password, Set.of(userRole));
         userService.addUser(user);
         redirectAttributes.addAttribute("message", "User added successfully! ");
         return "redirect:/admin";

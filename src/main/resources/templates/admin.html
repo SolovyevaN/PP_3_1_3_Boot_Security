@@ -2,125 +2,77 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Административная панель</title>
+    <title>Админ Панель</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2 {
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-        a, button {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 5px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        a {
-            background-color: #007bff;
-            color: white;
-        }
-        button {
-            background-color: #dc3545;
-            color: white;
-        }
-        button:hover, a:hover {
-            opacity: 0.8;
-        }
-        form {
-            display: inline;
-        }
-        input, select {
-            margin: 5px 0;
-            padding: 8px;
-            width: 100%;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        button, input, select { margin-top: 5px; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>Административная панель</h1>
-    <a th:href="@{/logout}">Выйти</a>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Возраст</th>
-            <th>Роли</th>
-            <th>Действия</th>
-        </tr>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.id}"></td>
-            <td th:text="${user.name}"></td>
-            <td th:text="${user.surname}"></td>
-            <td th:text="${user.age}"></td>
-            <td th:text="${user.roles}"></td>
-            <td>
-                <a th:href="@{/admin/updateUser/{id}(id=${user.id})}">Редактировать</a>
-                <form th:action="@{/admin/deleteUser/{id}(id=${user.id})}" method="post">
-                    <input type="hidden" name="_method" value="delete"/>
-                    <button type="submit">Удалить</button>
-                </form>
-                <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post">
-                    <input type="hidden" name="role" value="ROLE_ADMIN">
-                    <button type="submit">Сделать администратором</button>
-                </form>
-                <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post">
-                    <input type="hidden" name="role" value="ROLE_USER">
-                    <button type="submit">Лишить админки</button>
-                </form>
-            </td>
-        </tr>
-    </table>
-    <h2>Добавить нового пользователя</h2>
-    <form th:action="@{/admin/addUser}" method="post">
-        <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="surname">Фамилия:</label>
-        <input type="text" id="surname" name="surname" required>
-        <label for="age">Возраст:</label>
-        <input type="number" id="age" name="age" min="1" required>
-        <label for="password">Пароль:</label>
-        <input type="text" id="password" name="password" required>
-        <label for="role">Роль:</label>
-        <select id="role" name="role" required>
-            <option value="ROLE_USER">Пользователь</option>
-            <option value="ROLE_ADMIN">Администратор</option>
-        </select>
-        <button type="submit">Добавить пользователя</button>
-    </form>
-</div>
+<h1>Админ Панель</h1>
+<a th:href="@{/logout}">Выйти</a>
+
+<h2>Поиск пользователя по ID</h2>
+<form th:action="@{/admin/findById}" method="get">
+    <label for="userId">ID пользователя:</label>
+    <input type="number" id="userId" name="id" required>
+    <button type="submit">Найти</button>
+</form>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Фамилия</th>
+        <th>Возраст</th>
+        <th>Роли</th>
+        <th>Действия</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.surname}"></td>
+        <td th:text="${user.age}"></td>
+        <td th:text="${user.roles}"></td>
+        <td>
+            <a th:href="@{/admin/updateUser/{id}(id=${user.id})}">Редактировать</a>
+            <form th:action="@{/admin/deleteUser/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit">Удалить</button>
+            </form>
+            <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="role" value="ROLE_ADMIN">
+                <button type="submit">Сделать администратором</button>
+            </form>
+            <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="role" value="ROLE_USER">
+                <button type="submit">Разжаловать</button>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<h2>Добавить нового пользователя</h2>
+<form th:action="@{/admin/addUser}" method="post">
+    <label for="name">Имя:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="surname">Фамилия:</label>
+    <input type="text" id="surname" name="surname" required>
+    <label for="age">Возраст:</label>
+    <input type="number" id="age" name="age" min="1" required>
+    <label for="password">Пароль:</label>
+    <input type="text" id="password" name="password" required>
+    <br>
+    <label for="role">Роль:</label>
+    <select id="role" name="role" required>
+        <option value="ROLE_USER">Пользователь</option>
+        <option value="ROLE_ADMIN">Администратор</option>
+    </select>
+    <br>
+    <button type="submit">Добавить пользователя</button>
+</form>
 </body>
 </html>

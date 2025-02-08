@@ -22,7 +22,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository,RoleRepository roleRepository ) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
@@ -69,6 +69,7 @@ public class UserService implements UserDetailsService {
         Hibernate.initialize(user.getRoles());
         return user;
     }
+
     @Transactional
     public void changeRole(Long id, String role) {
         User user = userRepository.findById(id)
