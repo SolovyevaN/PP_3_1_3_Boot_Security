@@ -18,7 +18,7 @@ import java.util.Optional;
 
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService implements UserDetailsService , UsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
