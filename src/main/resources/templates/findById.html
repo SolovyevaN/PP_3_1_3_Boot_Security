@@ -23,6 +23,7 @@
         <p><strong>Фамилия:</strong> <span th:text="${user.surname}"></span></p>
         <p><strong>Возраст:</strong> <span th:text="${user.age}"></span></p>
         <p><strong>Пароль:</strong> <span th:text="${user.password}"></span></p>
+        <p><strong>Почта:</strong> <span th:text="${user.email}"></span></p>
 
         <h2>Управление пользователем</h2>
         <a th:href="@{/admin/updateUser/{id}(id=${user.id})}" class="btn">Редактировать</a>

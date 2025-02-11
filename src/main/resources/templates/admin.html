@@ -28,6 +28,7 @@
         <th>Имя</th>
         <th>Фамилия</th>
         <th>Возраст</th>
+        <th>Почта</th>
         <th>Роли</th>
         <th>Действия</th>
     </tr>
@@ -36,6 +37,7 @@
         <td th:text="${user.name}"></td>
         <td th:text="${user.surname}"></td>
         <td th:text="${user.age}"></td>
+        <td th:text="${user.email}"></td>
         <td th:text="${user.roles}"></td>
         <td>
             <a th:href="@{/admin/updateUser/{id}(id=${user.id})}">Редактировать</a>
@@ -65,6 +67,8 @@
     <input type="number" id="age" name="age" min="1" required>
     <label for="password">Пароль:</label>
     <input type="text" id="password" name="password" required>
+    <label for="email">Почта:</label>
+    <input type="text" id="email" name="email" required>
     <br>
     <label for="role">Роль:</label>
     <select id="role" name="role" required>

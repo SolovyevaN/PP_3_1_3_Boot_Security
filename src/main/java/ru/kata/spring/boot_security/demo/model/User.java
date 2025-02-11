@@ -26,6 +26,8 @@ public class User implements UserDetails {
     private int age;
     @Column(name = "password", unique = true)
     private String password;
+    @Column(name = "email")
+    private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
@@ -33,11 +35,12 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(String name, String surname, int age, String password, Set<Role> roles) {
+    public User(String name, String surname, int age, String password, String email, Set<Role> roles) {
         this.name = name;
         this.surname = surname;
         this.age = age;
         this.password = password;
+        this.email = email;
         this.roles = roles;
     }
 

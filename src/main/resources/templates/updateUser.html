@@ -32,6 +32,9 @@
         <label for="password">Пароль:</label>
         <input type="text" id="password" name="password" th:value="${user.password}" required>
 
+        <label for="email">Почта:</label>
+        <input type="text" id="email" name="email" th:value="${user.email}" required>
+
         <button type="submit" class="btn">Сохранить</button>
         <a th:href="@{/admin}" class="btn btn-danger">Отмена</a>
     </form>

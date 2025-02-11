@@ -45,11 +45,12 @@ public class AdminController {
                           @RequestParam("surname") String surname,
                           @RequestParam("age") int age,
                           @RequestParam("password") String password,
+                          @RequestParam("email") String email,
                           @RequestParam("role") String role,
                           RedirectAttributes redirectAttributes) {
         Role userRole = roleRepository.findByName(role)
                 .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-        User user = new User(name, surname, age, password, Set.of(userRole));
+        User user = new User(name, surname, age, password, email, Set.of(userRole));
         userService.addUser(user);
         redirectAttributes.addAttribute("message", "User added successfully! ");
         return "redirect:/admin";
@@ -66,12 +67,14 @@ public class AdminController {
                              @RequestParam("name") String name,
                              @RequestParam("surname") String surname,
                              @RequestParam("age") int age,
-                             @RequestParam("password") String password) {
+                             @RequestParam("password") String password,
+                             @RequestParam("email") String email) {
         User user = userService.findById(id);
         user.setName(name);
         user.setSurname(surname);
         user.setAge(age);
         user.setPassword(password);
+        user.setEmail(email);
         userService.updateUser(user);
         return "redirect:/admin";
     }
