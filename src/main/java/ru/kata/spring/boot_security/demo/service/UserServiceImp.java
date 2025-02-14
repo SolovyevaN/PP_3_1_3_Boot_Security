@@ -77,9 +77,10 @@ public class UserServiceImp implements UserDetailsService {
 
     @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFindExeption("User with id " + id + " not found");
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFindExeption("User with id " + id + " not found"));
+        user.getRoles().clear();
+        userRepository.save(user);
         userRepository.deleteById(id);
     }
 
