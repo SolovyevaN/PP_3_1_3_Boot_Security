@@ -3,7 +3,6 @@ package ru.kata.spring.boot_security.demo.dto;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.Set;
 
 @Data
 public class UserDto {

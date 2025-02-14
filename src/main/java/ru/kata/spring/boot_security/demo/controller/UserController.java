@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 import java.security.Principal;
@@ -22,6 +23,7 @@ public class UserController {
 
     @GetMapping
     public String userPage(Model model, Principal principal) {
+        System.out.println("Запрос к /user от: " + principal.getName());
         User user = (User) userService.loadUserByUsername(principal.getName());
         model.addAttribute("user", user);
         return "user";

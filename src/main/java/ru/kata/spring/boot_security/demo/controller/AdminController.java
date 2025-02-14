@@ -78,10 +78,4 @@ public class AdminController {
         }
         return "findById";
     }
-
-//    @PostMapping("/changeRole/{id}")
-//    public String changeRole(@PathVariable Long id, @RequestParam String role) {
-//        userService.changeRole(id, role);
-//        return "redirect:/admin";
-//    }
 }
