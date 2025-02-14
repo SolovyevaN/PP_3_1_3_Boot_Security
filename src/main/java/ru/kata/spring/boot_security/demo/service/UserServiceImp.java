@@ -38,7 +38,7 @@ public class UserServiceImp implements UserDetailsService {
             throw new DuplicatePasswordException("Пользователь с таким логином уже существует!");
         }
         Role userRole = roleRepository.findByName(userDto.getRole())
-                .orElseThrow(()-> new RuntimeException("Роль не найдена"));
+                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         User user = new User(userDto.getName(), userDto.getSurname(), userDto.getAge(),
@@ -91,7 +91,7 @@ public class UserServiceImp implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Hibernate.initialize(user.getRoles());
         return user;
     }
