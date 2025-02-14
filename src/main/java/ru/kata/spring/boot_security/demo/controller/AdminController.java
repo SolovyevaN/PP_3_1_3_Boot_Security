@@ -5,25 +5,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
-import ru.kata.spring.boot_security.demo.service.UserService;
+import ru.kata.spring.boot_security.demo.service.RoleServiceImp;
+import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private final UserService userService;
-    private final RoleRepository roleRepository;
+    private final UserServiceImp userService;
+    private final RoleServiceImp roleService;
 
     @Autowired
-    public AdminController(UserService userService, RoleRepository roleRepository) {
+    public AdminController(UserServiceImp userService, RoleServiceImp roleService) {
 
         this.userService = userService;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
     @GetMapping
@@ -41,17 +40,8 @@ public class AdminController {
     }
 
     @PostMapping("/addUser")
-    public String addUser(@RequestParam("name") String name,
-                          @RequestParam("surname") String surname,
-                          @RequestParam("age") int age,
-                          @RequestParam("password") String password,
-                          @RequestParam("email") String email,
-                          @RequestParam("role") String role,
-                          RedirectAttributes redirectAttributes) {
-        Role userRole = roleRepository.findByName(role)
-                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-        User user = new User(name, surname, age, password, email, Set.of(userRole));
-        userService.addUser(user);
+    public String addUser(@ModelAttribute UserDto userDto, RedirectAttributes redirectAttributes) {
+        userService.addUser(userDto);
         redirectAttributes.addAttribute("message", "User added successfully! ");
         return "redirect:/admin";
     }
@@ -64,18 +54,9 @@ public class AdminController {
 
     @PutMapping("/updateUser/{id}")
     public String updateUser(@PathVariable("id") Long id,
-                             @RequestParam("name") String name,
-                             @RequestParam("surname") String surname,
-                             @RequestParam("age") int age,
-                             @RequestParam("password") String password,
-                             @RequestParam("email") String email) {
-        User user = userService.findById(id);
-        user.setName(name);
-        user.setSurname(surname);
-        user.setAge(age);
-        user.setPassword(password);
-        user.setEmail(email);
-        userService.updateUser(user);
+                             @ModelAttribute UserDto userDto) {
+        userDto.setId(id);
+        userService.updateUser(userDto);
         return "redirect:/admin";
     }
 
@@ -83,6 +64,7 @@ public class AdminController {
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
+        model.addAttribute("roles", roleService.getAllRoles());
         return "/updateUser";
     }
 
@@ -97,9 +79,9 @@ public class AdminController {
         return "findById";
     }
 
-    @PostMapping("/changeRole/{id}")
-    public String changeRole(@PathVariable Long id, @RequestParam String role) {
-        userService.changeRole(id, role);
-        return "redirect:/admin";
-    }
+//    @PostMapping("/changeRole/{id}")
+//    public String changeRole(@PathVariable Long id, @RequestParam String role) {
+//        userService.changeRole(id, role);
+//        return "redirect:/admin";
+//    }
 }

@@ -45,11 +45,26 @@
                 <input type="hidden" name="_method" value="delete"/>
                 <button type="submit">Удалить</button>
             </form>
-            <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post" style="display:inline;">
+            <form th:action="@{/admin/updateUser/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="_method" value="put"/>
+                <input type="hidden" name="id" th:value="${user.id}">
+                <input type="hidden" name="name" th:value="${user.name}">
+                <input type="hidden" name="surname" th:value="${user.surname}">
+                <input type="hidden" name="age" th:value="${user.age}">
+                <input type="hidden" name="email" th:value="${user.email}">
+                <input type="hidden" name="password" th:value="${user.password}">
                 <input type="hidden" name="role" value="ROLE_ADMIN">
                 <button type="submit">Сделать администратором</button>
             </form>
-            <form th:action="@{/admin/changeRole/{id}(id=${user.id})}" method="post" style="display:inline;">
+
+            <form th:action="@{/admin/updateUser/{id}(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="_method" value="put"/>
+                <input type="hidden" name="id" th:value="${user.id}">
+                <input type="hidden" name="name" th:value="${user.name}">
+                <input type="hidden" name="surname" th:value="${user.surname}">
+                <input type="hidden" name="age" th:value="${user.age}">
+                <input type="hidden" name="email" th:value="${user.email}">
+                <input type="hidden" name="password" th:value="${user.password}">
                 <input type="hidden" name="role" value="ROLE_USER">
                 <button type="submit">Разжаловать</button>
             </form>
