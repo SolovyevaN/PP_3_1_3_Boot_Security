@@ -21,10 +21,9 @@ import java.util.Set;
 
 
 @Service
-public class UserServiceImp implements UserDetailsService {
+public class UserServiceImp implements UserDetailsService, UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-
 
     public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
@@ -33,14 +32,10 @@ public class UserServiceImp implements UserDetailsService {
 
     @Transactional
     public void addUser(UserDto userDto) {
-        Optional<User> existingUser = userRepository.findByEmail(userDto.getEmail());
-        if (existingUser.isPresent()) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new DuplicatePasswordException("Пользователь с таким логином уже существует!");
         }
-        Role userRole = roleRepository.findByName(userDto.getRole())
-                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
+        Set<Role> roles = new HashSet<>(roleRepository.findAllById(userDto.getRole()));
         User user = new User(userDto.getName(), userDto.getSurname(), userDto.getAge(),
                 userDto.getPassword(), userDto.getEmail(), roles);
         userRepository.save(user);
@@ -53,22 +48,11 @@ public class UserServiceImp implements UserDetailsService {
         user.setName(userDto.getName());
         user.setSurname(userDto.getSurname());
         user.setAge(userDto.getAge());
-        user.setPassword(userDto.getPassword());
         user.setEmail(userDto.getEmail());
-        if (userDto.getRole() != null) {
-            Set<Role> roles = new HashSet<>(user.getRoles());
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new RuntimeException("Role not found"));
-            if ("ROLE_ADMIN".equals(userDto.getRole())) {
-                roles.add(adminRole);
-            } else {
-                roles.remove(adminRole);
-            }
-            user.setRoles(roles);
-        }
+        Set<Role> newRoles = new HashSet<>(roleRepository.findAllById(userDto.getRole()));
+        user.setRoles(newRoles);
         userRepository.save(user);
     }
-
 
     public User findById(Long id) {
         return userRepository.findById(id)
@@ -88,12 +72,14 @@ public class UserServiceImp implements UserDetailsService {
         return userRepository.findAll();
     }
 
-    @Transactional
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Hibernate.initialize(user.getRoles());
+        System.out.println("Авторизованный пользователь: " + user.getName());
+        System.out.println("Роли пользователя: " + user.getRoles());
         return user;
     }
 }

@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.model;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,12 +25,14 @@ public class User implements UserDetails {
     private String surname;
     @Column(name = "age")
     private int age;
-    @Column(name = "password")
+    @Column(name = "password", unique = true)
     private String password;
+    // <-- добавляем email
+    @Getter
     @Column(name = "email")
     private String email;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
