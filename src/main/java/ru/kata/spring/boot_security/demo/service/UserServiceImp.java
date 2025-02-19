@@ -22,12 +22,12 @@ import java.util.Set;
 @Service
 public class UserServiceImp implements UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleServiceImp roleServiceImp;
+    private final RoleService roleService;
 
 
-    public UserServiceImp(UserRepository userRepository, RoleServiceImp roleServiceImp) {
+    public UserServiceImp(UserRepository userRepository, RoleService roleService) {
         this.userRepository = userRepository;
-        this.roleServiceImp = roleServiceImp;
+        this.roleService = roleService;
     }
 
     @Transactional
@@ -36,7 +36,7 @@ public class UserServiceImp implements UserDetailsService {
         if (existingUser.isPresent()) {
             throw new DuplicatePasswordException("Пользователь с таким логином уже существует!");
         }
-        Role userRole = roleServiceImp.getNameRoles(userDto.getRole())
+        Role userRole = roleService.getNameRoles(userDto.getRole())
                 .orElseThrow(() -> new RuntimeException("Роль не найдена"));
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
@@ -56,7 +56,7 @@ public class UserServiceImp implements UserDetailsService {
         user.setEmail(userDto.getEmail());
         if (userDto.getRole() != null) {
             Set<Role> roles = new HashSet<>(user.getRoles());
-            Role adminRole = roleServiceImp.getNameRoles("ROLE_ADMIN")
+            Role adminRole = roleService.getNameRoles("ROLE_ADMIN")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             if ("ROLE_ADMIN".equals(userDto.getRole())) {
                 roles.add(adminRole);
