@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.service.RoleServiceImp;
 import ru.kata.spring.boot_security.demo.service.UserServiceImp;
 
 import java.util.List;
@@ -16,13 +15,11 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
     private final UserServiceImp userService;
-    private final RoleServiceImp roleService;
 
     @Autowired
-    public AdminController(UserServiceImp userService, RoleServiceImp roleService) {
+    public AdminController(UserServiceImp userService) {
 
         this.userService = userService;
-        this.roleService = roleService;
     }
 
     @GetMapping
@@ -64,7 +61,7 @@ public class AdminController {
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
         User user = userService.findById(id);
         model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.getAllRoles());
+        model.addAttribute("roles", userService.getAllUsers());
         return "/updateUser";
     }
 

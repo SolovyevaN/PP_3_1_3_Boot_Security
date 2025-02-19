@@ -11,7 +11,6 @@ import ru.kata.spring.boot_security.demo.exception.DuplicatePasswordException;
 import ru.kata.spring.boot_security.demo.exception.UserNotFindExeption;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.util.HashSet;
@@ -23,12 +22,12 @@ import java.util.Set;
 @Service
 public class UserServiceImp implements UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleServiceImp roleServiceImp;
 
 
-    public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImp(UserRepository userRepository, RoleServiceImp roleServiceImp) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleServiceImp = roleServiceImp;
     }
 
     @Transactional
@@ -37,7 +36,7 @@ public class UserServiceImp implements UserDetailsService {
         if (existingUser.isPresent()) {
             throw new DuplicatePasswordException("Пользователь с таким логином уже существует!");
         }
-        Role userRole = roleRepository.findByName(userDto.getRole())
+        Role userRole = roleServiceImp.getNameRoles(userDto.getRole())
                 .orElseThrow(() -> new RuntimeException("Роль не найдена"));
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
@@ -57,7 +56,7 @@ public class UserServiceImp implements UserDetailsService {
         user.setEmail(userDto.getEmail());
         if (userDto.getRole() != null) {
             Set<Role> roles = new HashSet<>(user.getRoles());
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+            Role adminRole = roleServiceImp.getNameRoles("ROLE_ADMIN")
                     .orElseThrow(() -> new RuntimeException("Role not found"));
             if ("ROLE_ADMIN".equals(userDto.getRole())) {
                 roles.add(adminRole);
@@ -80,7 +79,6 @@ public class UserServiceImp implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFindExeption("User with id " + id + " not found"));
         user.getRoles().clear();
-        userRepository.save(user);
         userRepository.deleteById(id);
     }
 
